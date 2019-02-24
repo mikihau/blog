@@ -1,4 +1,18 @@
-baseURL = "http://example.org/"
+baseURL = "https://mikihau.github.io/"
 languageCode = "en-us"
-title = "My New Hugo Site"
+title = "Miki's Blog"
 theme = "yinyang"
+
+[author]
+  name = "Miki Hau"
+  homepage = "https://mikihau.github.io/"
+
+[languages]
+  [languages.en]
+    contentDir = "content/en"
+    languageName = "English"
+    weight = 2
+
+#[[params.socials]]
+#name = "About"
+#link = "https://mikihau.github.io/"
