@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.58.3" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Miki Hau" />
+  <meta property="og:url" content="https://mikihau.github.io/posts/building-minesweeper-with-go/" />
+  <link rel="canonical" href="https://mikihau.github.io/posts/building-minesweeper-with-go/" /><script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/mikihau.github.io\/"
+      },
+      "articleSection" : "posts",
+      "name" : "Building Minesweeper with Go",
+      "headline" : "Building Minesweeper with Go",
+      "description" : "After going through the Tour of Go I started my first toy program \x26ndash; the game of Minesweeper (on github). To exercise what I have gotten down with Go I had a couple of things in mind about this program before I started:\n It should be feature complete \x26ndash; just all things you can do with the game. It should only depend on the standard library, so that I can focus on the basics.",
+      "inLanguage" : "en-US",
+      "author" : "Miki Hau",
+      "creator" : "Miki Hau",
+      "publisher": "Miki Hau",
+      "accountablePerson" : "Miki Hau",
+      "copyrightHolder" : "Miki Hau",
+      "copyrightYear" : "2019",
+      "datePublished": "2019-02-28 16:35:04 -0800 PST",
+      "dateModified" : "2019-02-28 16:35:04 -0800 PST",
+      "url" : "https:\/\/mikihau.github.io\/posts\/building-minesweeper-with-go\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>Building Minesweeper with Go - Miki&#39;s Blog</title>
+  <meta property="og:title" content="Building Minesweeper with Go - Miki&#39;s Blog" />
+  <meta property="og:type" content="article" />
+  <meta name="description" content="After going through the Tour of Go I started my first toy program &ndash; the game of Minesweeper (on github). To exercise what I have gotten down with Go I had a couple of things in mind about this program before I started:
+ It should be feature complete &ndash; just all things you can do with the game. It should only depend on the standard library, so that I can focus on the basics." />
+
+  <link rel="stylesheet" href="https://unpkg.com/flexboxgrid@6.3.1/dist/flexboxgrid.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/tomorrow.min.css" />
+  <link rel="stylesheet" href="/css/index.css">
+  <link href="/index.xml" rel="alternate" type="application/rss+xml" title="Miki&#39;s Blog">
+  
+  <link href="https://fonts.googleapis.com/css?family=Arvo|Permanent+Marker" rel="stylesheet">
+  
+  <script>
+    
+
+    (function (undefined) { }).call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
+  </script>
+
+  
+</head>
+
+  <body>
+    <article class="post English" id="article">
+      <div class="row">
+        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
+          <a href="/">
+            <div class="head-line"></div>
+          </a>
+          <header class="post-header">
+            <h1 class="post-title">Building Minesweeper with Go</h1>
+            <div class="row">
+              <div class="col-xs-6">
+                <time class="post-date" datetime="2019-02-28 16:35:04 PST">
+                  Feb 28 2019
+                </time>
+              </div>
+              <div class="col-xs-6">
+                <div class="post-author">
+                  <a target="_blank" href="https://mikihau.github.io/">@Miki Hau</a>
+                </div>
+              </div>
+            </div>
+          </header>
+    
+          <div class="post-content markdown-body">
+            <p>After going through the <a href="https://tour.golang.org/list">Tour of Go</a> I started my first toy program &ndash; the game of Minesweeper (<a href="https://github.com/mikihau/minesweeper">on github</a>). To exercise what I have gotten down with Go I had a couple of things in mind about this program before I started:</p>
+
+<ul>
+<li>It should be feature complete &ndash; just all things you can do with the game.</li>
+<li>It should only depend on the standard library, so that I can focus on the basics.</li>
+</ul>
+
+<p>When I finished it turned out like this:
+<img src="/images/minesweeper-demo.gif" alt="Demo" /></p>
+
+<p>Pretty sweet!</p>
+
+<p>As a newbie Gopher I think it&rsquo;ll be helpful to write down things I learned, and ideas for improvement while working on this initial version. Here they are:</p>
+
+<ol>
+<li><p><strong>Every assignment creates a (shallow) copy.</strong> I was caught by surprise while working on the recursive <code>explore()</code> function, where I want to get hold of a cell by its coordinates within the board, then modify some properties of the cell.</p>
+
+<p>This works:</p>
+
+<pre><code class="language-go">cell := &amp;b.grid[x][y]
+cell.revealed = true // was previously false
+</code></pre>
+
+<p>This also works:</p>
+
+<pre><code class="language-go">b.grid[x][y].revealed = true
+</code></pre>
+
+<p>This doesn&rsquo;t work:</p>
+
+<pre><code class="language-go">cell := b.grid[x][y]
+cell.revealed = true // was previously false
+</code></pre>
+
+<p>Coming from the Python world I had assumed the third variation would have worked, because well, the the grid hold the cell object, so it should be equivalent to saying <code>b.grid[x][y].revealed = true</code>. Turned out it&rsquo;s not the case. Under the hood, the assignment copies the content of the cell, and gives me that copy. So whatever I do with <code>cell</code> has nothing to do with <code>b.grid[x][y]</code> because they&rsquo;re two seperate objects. The caveat here is that the copy made by assignment is shallow. If a cell contains references, e.g. arrays/slices/pointers/maps/functions/channels (what about structs?), then the copied struct still holds on to those same objects in those fields, because they have the references copied.</p></li>
+
+<li><p><strong>Duck typing is out (or at least out of easy reach).</strong> This issue came up when I was trying to validate user inputs from the command line. In my program, some command handlers expect string arguments, and some expect ints. If I were to do this in Python, I&rsquo;d be happy to write a function that returns a list of arguments (of the type that the handler expect) after sanitizing the inputs. But in Go <em>you can&rsquo;t return a slice of an undetermined type</em>, regardless of type homogeneity within that slice. This really calls out for generics, which Go intentionally doesn&rsquo;t offer (for good reasons!). Without generics I suspect it can probably be done with some sort of <code>interface{}</code> and/or reflection, but fighting with the type system usually means there are better ways to do it &ndash; I&rsquo;ll be on the look out.</p></li>
+
+<li><p><strong>Abstractions with structs + interfaces vs classes.</strong> From what I get from the Tour of Go, a struct is a collection of fields, and an interface is a collection of method signatures. It came as an afterthought to me that if I combine these two features together, I get what I would normally expect for a class as an OOP language. As an example, in the code I have this lengthy switch statement taking care of all argument validation, and executing commands. What I could have done is to abstract the command as an interface, and each command (<code>new</code>, <code>reveal</code>, <code>flag</code>, <code>exit</code>, and <code>help</code>) gets to keep its own set of fields, and have its own behavior for validation, execution and exit.</p>
+
+<pre><code class="language-go">type command interface {
+    validate func(string) ([]string, error)
+    execute  func(*board, []int)
+    exit     func(board)
+}
+</code></pre>
+
+<p>For example, the <code>reveal</code> command can be defined as the following:</p>
+
+<pre><code class="language-go">type revealCommand struct {
+    numArgs int
+    args    []int
+}
+
+func (r revealCommand) validate(input string) error {
+    parsedArgs := strings.Fields(input)
+    if len(parsedArgs) != r.numArgs {
+        return fmt.Errorf(&quot;Wrong number of arguments: expecting %v, got %v -- type 'h' for help&quot;, r.numArgs, len(parsedArgs))
+    }
+
+    for i, arg := range parsedArgs {
+        if value, err := strconv.Atoi(arg); err == nil {
+            r.args[i] = value
+        } else {
+            return fmt.Errorf(&quot;Expecting integer arguments -- type 'h' for help&quot;)
+        }
+    }
+    return nil
+}
+
+func (r revealCommand) execute(b *board) {
+    b.updateOnReveal(r.args)
+}
+
+func (r revealCommand) exit(b board) {
+    fmt.Println(b)
+}
+</code></pre>
+
+<p>This set up simplifies the main eval loop. After instantiating a command, all we have to do  is to call <code>validate()</code>, <code>execute()</code> and <code>exit()</code> on it.</p></li>
+
+<li><p>Spice it up with goroutines? No thanks, not for minesweeper. In this game, all board updates are just changing some bits in memory, so it can happen synchronously. Plus we&rsquo;re constantly waiting on user inputs, one move at a time &ndash; there can be better situations where concurrency is actually useful.</p></li>
+</ol>
+
+          </div>
+          
+          
+        </div>
+      </div>
+    </article>
+
+    <script src="/js/highlight.pack.js"></script>
+<script src="https://unpkg.com/quicklink@0.1.1/dist/quicklink.umd.js"></script>
+
+<script>
+  hljs.initHighlightingOnLoad();
+  
+  var posts = document.getElementById('posts-list');
+  posts && quicklink({
+    el: posts,
+    priority: true,
+  });
+</script>
+
+    
+
+  </body>
+</html>

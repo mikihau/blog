@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.58.3" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Miki Hau" />
+  <meta property="og:url" content="https://mikihau.github.io/posts/publishing-my-first-chrome-extension/" />
+  <link rel="canonical" href="https://mikihau.github.io/posts/publishing-my-first-chrome-extension/" /><script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/mikihau.github.io\/"
+      },
+      "articleSection" : "posts",
+      "name" : "Publishing My First Chrome Extension",
+      "headline" : "Publishing My First Chrome Extension",
+      "description" : "Just went through the excitement of publishing my first Chrome Extension, Douban Dousay filter (Chrome Web Store) (github). The code and feature itself is dead simple (~60 lines of javascript), but I just want to make a point for those who thinks making a Chrome Extension is a huge commitment or something. No, it\x26rsquo;s actually pretty easy to get started.\nWhat I built was a filter for a social network site.",
+      "inLanguage" : "en-US",
+      "author" : "Miki Hau",
+      "creator" : "Miki Hau",
+      "publisher": "Miki Hau",
+      "accountablePerson" : "Miki Hau",
+      "copyrightHolder" : "Miki Hau",
+      "copyrightYear" : "2019",
+      "datePublished": "2019-10-14 20:32:09 -0700 PDT",
+      "dateModified" : "2019-10-14 20:32:09 -0700 PDT",
+      "url" : "https:\/\/mikihau.github.io\/posts\/publishing-my-first-chrome-extension\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>Publishing My First Chrome Extension - Miki&#39;s Blog</title>
+  <meta property="og:title" content="Publishing My First Chrome Extension - Miki&#39;s Blog" />
+  <meta property="og:type" content="article" />
+  <meta name="description" content="Just went through the excitement of publishing my first Chrome Extension, Douban Dousay filter (Chrome Web Store) (github). The code and feature itself is dead simple (~60 lines of javascript), but I just want to make a point for those who thinks making a Chrome Extension is a huge commitment or something. No, it&rsquo;s actually pretty easy to get started.
+What I built was a filter for a social network site." />
+
+  <link rel="stylesheet" href="https://unpkg.com/flexboxgrid@6.3.1/dist/flexboxgrid.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/tomorrow.min.css" />
+  <link rel="stylesheet" href="/css/index.css">
+  <link href="/index.xml" rel="alternate" type="application/rss+xml" title="Miki&#39;s Blog">
+  
+  <link href="https://fonts.googleapis.com/css?family=Arvo|Permanent+Marker" rel="stylesheet">
+  
+  <script>
+    
+
+    (function (undefined) { }).call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
+  </script>
+
+  
+</head>
+
+  <body>
+    <article class="post English" id="article">
+      <div class="row">
+        <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
+          <a href="/">
+            <div class="head-line"></div>
+          </a>
+          <header class="post-header">
+            <h1 class="post-title">Publishing My First Chrome Extension</h1>
+            <div class="row">
+              <div class="col-xs-6">
+                <time class="post-date" datetime="2019-10-14 20:32:09 PDT">
+                  Oct 14 2019
+                </time>
+              </div>
+              <div class="col-xs-6">
+                <div class="post-author">
+                  <a target="_blank" href="https://mikihau.github.io/">@Miki Hau</a>
+                </div>
+              </div>
+            </div>
+          </header>
+    
+          <div class="post-content markdown-body">
+            <p>Just went through the excitement of publishing my first Chrome Extension, Douban Dousay filter (<a href="https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3%E5%B9%BF%E6%92%AD%E8%BF%87%E6%BB%A4%E5%99%A8-douban-dousay-fil/mmlilcjbhccgadmbfojmjlgaegkpklnk">Chrome Web Store</a>) (<a href="https://github.com/mikihau/dousay-filter-chrome-extension">github</a>). The code and feature itself is dead simple (~60 lines of javascript), but I just want to make a point for those who thinks making a Chrome Extension is a huge commitment or something. No, it&rsquo;s actually pretty easy to get started.</p>
+
+<p>What I built was a filter for a social network site. The extension should hide an item from the timeline, if the item includes any of the keywords that a user defines. Let me break it up.</p>
+
+<ul>
+<li><p><strong>Modifying the content of an HTML page</strong><br />
+The Extension starts with a file named <code>manifest.json</code>, which includes configuration/metadata of the app. In this file you can specify some <code>content_scripts</code>. These <code>content_scripts</code> will be injected to the pages that matches the patterns you specify, so they have access to the content of the HTML file.</p>
+
+<pre><code class="language-javascript">&quot;content_scripts&quot;: [
+{
+&quot;js&quot;: [
+  &quot;content.js&quot;
+],
+&quot;matches&quot;: [
+  &quot;https://www.douban.com/&quot;,
+  &quot;https://www.douban.com/?p=*&quot;
+]
+}
+],
+</code></pre>
+
+<p>Then in <code>content.js</code> I can do the DOM manipulations to hide/show DOM objects. It looks like this:</p>
+
+<pre><code class="language-javascript">// navigate through the DOM tree
+var streamItems = document.querySelectorAll(&quot;#statuses &gt; div.stream-items &gt; div&quot;);
+for (var i = 0; i &lt; streamItems.length; i++) {
+for (var filter of filters) {
+if (streamItems[i].outerHTML.search(new RegExp(filter)) != -1) {
+  // hide the item by tweaking its style property
+  streamItems[i].style.display = &quot;none&quot;;
+  break;
+}
+}
+}
+</code></pre></li>
+
+<li><p><strong>Adding a popup menu from the extension icon</strong><br />
+A popup is a page that pops up when you click the extension icon on the top right corner of Chrome. I used to think you can only pop up a dropdown menu with it, but turns out it can be a full blown HTML file to put in whatever you want.</p>
+
+<pre><code class="language-javascript">&quot;browser_action&quot;: {
+&quot;default_popup&quot;: &quot;popup.html&quot;
+}
+</code></pre>
+
+<p>For lack of better visual design skills, I put a big text box to collect input keywords from users. Maybe it should have been a fancy itemized list, hmm.
+<img src="/images/chrome-extension-popup-demo.png" alt="Demo" /></p></li>
+
+<li><p><strong>Storing states</strong><br />
+This is the big one. I needed to persist the keywords to some kind of storage, so that the same keywords shows up the next time the user opens up the popup menu, and have the filter code use those keywords to modify the DOM properties. So I found the <a href="https://developer.chrome.com/apps/storage"><code>chrome.storage</code> API</a>. It&rsquo;s directly accessible to all scripts in the Extension, and it emits events so I can add event listeners like this:</p>
+
+<pre><code class="language-javascript">// when chrome.storage is changed, reapply filters on the page
+chrome.storage.onChanged.addListener(function (changes, areaName) {
+if (areaName == &quot;sync&quot; &amp;&amp; changes.hasOwnProperty('filters')) {
+revealDousayItems(); // back to normal 
+hideDousayItems(changes.filters.newValue); // reapply new filters
+}
+});
+</code></pre>
+
+<p>On the topic of event listeners &ndash; I found that Chrome <a href="https://developer.chrome.com/extensions/contentSecurityPolicy#JSExecution">does not allow</a> inline event handlers (e.g. <code>&lt;button onClick=...&gt;</code>) for security reasons. That got me trapped for quite a while. Another tricky part for me is to figure out where the code should go, <code>popup.js</code> or <code>content.js</code>. What helped was to realize that <code>Popup.js</code> runs in the context of the popup &ldquo;window&rdquo;, and knows nothing about the content of the social site page.</p></li>
+</ul>
+
+<p>That&rsquo;s it! The publishing steps for Chrome Extensions currently involves <a href="https://chrome.google.com/webstore/developer/dashboard">getting a developer account</a> for $5, then upload the package with some demo images/videos. It&rsquo;s been huge fun for me to hack up my own Extension, and see it up in the Chrome Store. Hopefully this post will encourage more people to start playing with Chrome Extensions, and create their own awesomeness.</p>
+
+          </div>
+          
+          
+        </div>
+      </div>
+    </article>
+
+    <script src="/js/highlight.pack.js"></script>
+<script src="https://unpkg.com/quicklink@0.1.1/dist/quicklink.umd.js"></script>
+
+<script>
+  hljs.initHighlightingOnLoad();
+  
+  var posts = document.getElementById('posts-list');
+  posts && quicklink({
+    el: posts,
+    priority: true,
+  });
+</script>
+
+    
+
+  </body>
+</html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Miki&#39;s Blog</title>
+    <link>https://mikihau.github.io/</link>
+    <description>Recent content on Miki&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 14 Oct 2019 20:32:09 -0700</lastBuildDate>
+    
+	<atom:link href="https://mikihau.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Publishing My First Chrome Extension</title>
+      <link>https://mikihau.github.io/posts/publishing-my-first-chrome-extension/</link>
+      <pubDate>Mon, 14 Oct 2019 20:32:09 -0700</pubDate>
+      
+      <guid>https://mikihau.github.io/posts/publishing-my-first-chrome-extension/</guid>
+      <description>Just went through the excitement of publishing my first Chrome Extension, Douban Dousay filter (Chrome Web Store) (github). The code and feature itself is dead simple (~60 lines of javascript), but I just want to make a point for those who thinks making a Chrome Extension is a huge commitment or something. No, it&amp;rsquo;s actually pretty easy to get started.
+What I built was a filter for a social network site.</description>
+    </item>
+    
+    <item>
+      <title>Book Review: The Manager&#39;s Path</title>
+      <link>https://mikihau.github.io/posts/book-review-the-managers-path/</link>
+      <pubDate>Mon, 29 Apr 2019 22:15:09 -0800</pubDate>
+      
+      <guid>https://mikihau.github.io/posts/book-review-the-managers-path/</guid>
+      <description>My Expectations I decided to pick up this book for a couple of reasons. I&amp;rsquo;ve always been looking for a description of what a manager does, or should do, at tech companies. I&amp;rsquo;ve personally worked with a couple of managers so far, and each of them manage with distinctive styles, that I find myself agree/disagree with. I&amp;rsquo;d like to have a set of basic expectations for managers, and learn to understand things from the management&amp;rsquo;s side.</description>
+    </item>
+    
+    <item>
+      <title>Building Minesweeper with Go</title>
+      <link>https://mikihau.github.io/posts/building-minesweeper-with-go/</link>
+      <pubDate>Thu, 28 Feb 2019 16:35:04 -0800</pubDate>
+      
+      <guid>https://mikihau.github.io/posts/building-minesweeper-with-go/</guid>
+      <description>After going through the Tour of Go I started my first toy program &amp;ndash; the game of Minesweeper (on github). To exercise what I have gotten down with Go I had a couple of things in mind about this program before I started:
+ It should be feature complete &amp;ndash; just all things you can do with the game. It should only depend on the standard library, so that I can focus on the basics.</description>
+    </item>
+    
+  </channel>
+</rss>
