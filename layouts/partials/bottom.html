@@ -1,0 +1,46 @@
+
+      <footer class="site-footer">
+        <span itemscope itemtype="http://schema.org/Person">
+          <!-- Making the link work for the name -->
+          <span itemprop="name"><a itemprop="url" href="{{ .Site.BaseURL }}">{{- .Site.Author.name -}}</span>
+
+          {{ if isset .Site.Params "work" -}},
+          <span itemprop="jobTitle">{{- .Site.Params.work.jobTitle -}}</span> at
+          <span itemprop="memberOf" itemscope itemtype="http://schema.org/Organization"><a itemprop="url" href="{{ .Site.Params.work.companyUrl }}"><span itemprop="name">
+            {{- .Site.Params.work.company -}}
+          </span></a></span>
+          {{- end -}}
+
+          <br>
+
+          <!-- Changing GH and TW to better names -->
+          {{ if isset .Site.Params "githubusername" -}}
+          <a itemprop="sameAs" href="https://github.com/{{ .Site.Params.githubUsername }}" title="GitHub">GitHub</a>
+          {{- end }}
+
+          {{ if isset .Site.Params "twitterusername" -}}
+          <a itemprop="sameAs" href="https://twitter.com/{{ .Site.Params.twitterUsername }}" title="Twitter">Twitter</a>
+          {{- end}}
+
+          {{ if isset .Site.Params "gpg" -}}
+          <a itemprop="sameAs" href="{{ .Site.Params.gpg.link }}" title="GPG {{ .Site.Params.gpg.key }} (fingerprint: {{ .Site.Params.gpg.fingerprint }})">GPG</a>
+          {{- end }}
+
+          <!-- Adding a couple of more things -->
+          <a itemprop="sameAs" href="{{ "index.xml" | relURL }}" title="RSS">RSS</a>
+
+          <br>
+
+          <span itemprop="credit"><a itemprop="url" href="https://github.com/dashdashzako/hugo-journal">Hugo Theme</span>
+
+        </span>
+
+        <!-- {{ hugo.BuildDate }} -->
+      </footer>
+    </div>
+
+  <script src="{{ "js/highlight.pack.js" | relURL }}"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  </body>
+</html>

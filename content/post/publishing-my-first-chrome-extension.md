@@ -46,6 +46,7 @@ A popup is a page that pops up when you click the extension icon on the top righ
 }
 ```
 For lack of better visual design skills, I put a big text box to collect input keywords from users. Maybe it should have been a fancy itemized list, hmm.
+
 ![Demo](/images/chrome-extension-popup-demo.png)
 
 - **Storing states**  

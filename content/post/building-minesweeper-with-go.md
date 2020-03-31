@@ -10,6 +10,7 @@ After going through the [Tour of Go](https://tour.golang.org/list) I started my 
 - It should only depend on the standard library, so that I can focus on the basics.
 
 When I finished it turned out like this:
+
 ![Demo](/images/minesweeper-demo.gif)
 
 Pretty sweet!
