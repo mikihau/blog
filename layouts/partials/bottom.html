@@ -13,6 +13,9 @@
 
           <br>
 
+          <!-- Adding a couple of more things -->
+          <a itemprop="sameAs" href="{{ "index.xml" | relURL }}" title="RSS">RSS</a>
+
           <!-- Changing GH and TW to better names -->
           {{ if isset .Site.Params "githubusername" -}}
           <a itemprop="sameAs" href="https://github.com/{{ .Site.Params.githubUsername }}" title="GitHub">GitHub</a>
@@ -26,12 +29,7 @@
           <a itemprop="sameAs" href="{{ .Site.Params.gpg.link }}" title="GPG {{ .Site.Params.gpg.key }} (fingerprint: {{ .Site.Params.gpg.fingerprint }})">GPG</a>
           {{- end }}
 
-          <!-- Adding a couple of more things -->
-          <a itemprop="sameAs" href="{{ "index.xml" | relURL }}" title="RSS">RSS</a>
-
-          <br>
-
-          <span itemprop="credit"><a itemprop="url" href="https://github.com/dashdashzako/hugo-journal">Hugo Theme</span>
+          <a itemprop="sameAs" href="https://github.com/dashdashzako/hugo-journal">Theme</a>
 
         </span>
 

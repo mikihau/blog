@@ -7,17 +7,12 @@ theme = "hugo-journal"
   name = "Miki Hau"
   homepage = "https://mikihau.github.io/"
 
-#[languages]
-#  [languages.en]
-#    contentDir = "content/posts"
-#    languageName = "English"
-#    weight = 2
-
 [params]
   description = "This is Miki's blog."
   githubUsername = "mikihau"
   twitterUsername = "@miki_hau"
   tagline = ""
+
 #[params.work]
 #  jobTitle = "occupation"
 #  company = "the company"
