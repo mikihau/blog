@@ -5,3 +5,4 @@
 [submodule "themes/hugo-journal"]
 	path = themes/hugo-journal
 	url = https://github.com/dashdashzako/hugo-journal.git
+	branch = main
