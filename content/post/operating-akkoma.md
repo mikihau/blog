@@ -182,7 +182,7 @@ Moving on to the real upgrading work, [the doc](https://docs.akkoma.dev/stable/a
     journalctl -u akkoma.service -f
     ```
 
-# Getting Another Admin
+# Extras: Onboarding Another Admin
 I'm really fortunate to have a volunteer sys admin for this Akkoma instance. so I'm making sure that they have root access on the server to be able to handle any incidents/issues. Not Akkoma related, just Ubuntu/Linux stuff.
 1. Create a linux user account:
     ```console
