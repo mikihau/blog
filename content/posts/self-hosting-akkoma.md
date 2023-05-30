@@ -12,7 +12,7 @@ I've decided to self-host my own [Akkoma](https://docs.akkoma.dev/stable/) (a ha
 
 Unless otherwise noted, all commands below are tested on an ARM-based machine with Ubuntu 22.04, for an Akkoma install from source. 
 
-# A Word of Warning: Hosting the Instance on a (Sub)domain With a Different Account Identifier
+## A Word of Warning: Hosting the Instance on a (Sub)domain With a Different Account Identifier
 I'm putting this down first, because this burnt me so bad, that I had to tear down the entire installation, and re-install the instance under a different subdomain. Read this if you're like me, who:
 - already hosts content on `domain.com`, 
 - is thinking of hosting the instance under `subdomain.domain.com`, 
@@ -28,9 +28,9 @@ Since my contents on `domain.com` is hosted on Gitlab Pages, which per [their in
 
 Just so that you mess things up and have to start from scratch like I did, [here](https://johnmee.com/how-to-reinstall-postgresql-on-ubuntu)'s how you uninstall and reinstall Postgres on Ubuntu 🥲.
 
-# Setting Up a Host Server
+## Setting Up a Host Server
 
-#### With Oracle Cloud Infrastructure
+### With Oracle Cloud Infrastructure
 
 My final setup is on an ARM-based OCI instance on their generous [free tier offering](https://www.oracle.com/cloud/free/), with the acknowledgement/expectation that this free tier may change in the future. To setup an account and create an instance, I follow [this tutorial](https://www.seenlyst.com/blog/oracle-cloud-free-vps-out-of-capacity/) -- admittedly including the script that, once in a while, checks if an instance is available in my home region. I'm lucky to have an instance created in about a week for my region.
 
@@ -38,7 +38,7 @@ Once the instance is created and a public IP address attached, I have no issues 
 
 OCI's Ubuntu instances are firewall protected by both the OS's iptables, and the VCN attached to the instance (we'll see later), so don't be surprised if a fresh instance doesn't allow most ingress TCP connections. 
 
-#### With Vultr
+### With Vultr
 
 I also get an instance with [Vultr](https://vultr.com) -- they run year-round promos, allowing you to try out their instances for free for some initial periods of time. Akkoma's resource consumption is minimal, so a humble $5/month instance with 1 vCPU, 1GB memory, and 1T bandwidth should be able to handle myself as the sole user of the app.
 
@@ -60,7 +60,7 @@ To                         Action      From
 ```
 To enable port 80 and 443 for ingress connections, `ufw allow 80/tcp` and `ufw allow 43/tcp`, then reload with `ufw reload`.
 
-#### Setting Up DNS for the Subdomain
+### Setting Up DNS for the Subdomain
 It's good to start setting up the DNS now, since the records usually take a while to propagate because of delays with your DNS server, TTL, caches everywhere etc. 
 
 I'm trying to set up my Akkoma instance on a subdomain `fedi.<domain>.com`, where `<domain>.com` already hosts my blog on Gitlab Pages. So the subdomain `fedi.<domain>.com` should point to my server. [Vultr's official DNS doc](https://www.vultr.com/docs/introduction-to-vultr-dns) isn't helpful on the subdomain issue, in that it directs you to use its own nameservers regardless of alternatives (OCI also has DNS servers available) -- but in my case, I'm already using DNS at my domain registar for `<domain>.com`. So I end up directly going to my domain registar, and adding my `A` record for `Hostname:akkoma, Type:A, value:<my_instance_ip>`. This is it!
@@ -68,7 +68,7 @@ I'm trying to set up my Akkoma instance on a subdomain `fedi.<domain>.com`, wher
 Like all DNS configurations, this takes a while to take effect. After a couple of hours, I'm able to verify with `nslookup fedi.<domain>.com`, which returns my instance's IP.
 
 
-# Installing Akkoma (From Source)
+## Installing Akkoma (From Source)
 On the OCI instance, I was following [the OTP guide](https://docs.akkoma.dev/stable/installation/otp_en/) until the config generation step gave me:
 ```console
 $ su akkoma -s $SHELL -lc "./bin/pleroma_ctl instance gen --output /etc/akkoma/config.exs --output-psql /tmp/setup_db.psql"
@@ -82,7 +82,7 @@ aarch64
 This means I'll have to install from source! All of the following commands are derived from the official Akkoma documentation, on installing from source, for [Arch Linux](https://docs.akkoma.dev/stable/installation/arch_linux_en/), and [Alphine Linux](https://docs.akkoma.dev/stable/installation/alpine_linux_en), adapted for Ubuntu.
 
 
-#### Installing Dependencies
+### Installing Dependencies
 1. Switch to the root user: 
     ```console
     sudo su - root
@@ -100,7 +100,7 @@ This means I'll have to install from source! All of the following commands are d
     systemctl start postgresql.service
     ```
 
-#### The Akkoma Backend
+### The Akkoma Backend
 1. Create the akkoma user if not already (`less /etc/passwd` to check): 
     ```console
     adduser --system --shell  /bin/false --home /opt/akkoma akkoma
@@ -145,7 +145,7 @@ This means I'll have to install from source! All of the following commands are d
     ```
     From another terminal (ssh'ed into my server) I'm able to `curl http://localhost:4000/api/v1/instance`, and get back some json. Sweet! 
 
-#### A Quick Summary of Where Things Are So Far
+### A Quick Summary of Where Things Are So Far
 - The config: `/opt/akkoma/config/prod.secret.exs`
 - The code: `/opt/akkoma` -- this is also system user `akkoma`'s home directory
 - The uploads directory: `/var/lib/akkoma/uploads`
@@ -153,7 +153,7 @@ This means I'll have to install from source! All of the following commands are d
 
 Moving on...
 
-#### Reverse Proxy and TLS Handling
+### Reverse Proxy and TLS Handling
 Any reverse proxy will do (the repo actually has a few other options in `/opt/akkoma/installation`), but I'll stick with nginx for now 😃 
 1. Stop nginx ot free up port 80: 
     ```console
@@ -234,14 +234,14 @@ Any reverse proxy will do (the repo actually has a few other options in `/opt/ak
     ```
     Pointing the browser to `https://fedi.<domain>.com` again, I get the same instructions to install a frontend.
 
-#### (Optional) Setting Up Custom Domain Identifiers
+### (Optional) Setting Up Custom Domain Identifiers
 If you're using a custom (sub)domain and want the usernames to be identified differently from the instance (sub)domain, this is when you want to set up two things:
 - the Akkoma config ([reference](https://docs.akkoma.dev/stable/configuration/how_to_serve_another_domain_for_webfinger/)), and
 - the redirects for WebFinger related endpoints ([reference](https://aeracode.org/2022/11/01/fediverse-custom-domains/)).  
 
 Make sure to get it right **now** before your instance starts federating! 
 
-#### Installing A Frontend
+### Installing A Frontend
 1. From what I heard, `pleroma-fe` is a light-weight minimalist frontend. I'll use it to play around for now:
     ```console
     cd /opt/akkoma
@@ -267,12 +267,12 @@ Make sure to get it right **now** before your instance starts federating!
       so that the change takes effect.
 
 
-#### Creating the admin user
+### Creating the admin user
 ```console
 su akkoma -s $SHELL -lc "MIX_ENV=prod mix pleroma.user new <username> <your@emailaddress> --admin"
 ```
 The command prints a URL to reset the password -- copy and pasting it to the browser, and logging in -- it works! Finally time to play around with some fun customizations 🎉.
 
-# Quick Validations
+## Quick Validations
 - Federation: I have another account on a Mastodon instance, and I try to have the two accounts follow each other and send direct messages -- to see if they get each other semi-instantly. During my first attempt at the custom subdomain setup, I was able to uncover the federation issue this way. 
 - I notice that for the remote accounts I follow, my instance initially pulls posts from back a few months or even a year ago -- but as my followees generate new contents, the new posts are up to date.

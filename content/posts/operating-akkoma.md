@@ -10,7 +10,7 @@ aliases:
 
 A couple of months into [self-hosting my Akkoma instance]({{< ref "self-hosting-akkoma.md" >}}), I find myself doing a couple of operational tasks at a recurring basis. So might as well write them down here for future reference. Again, this is on my ARM-based machine with Ubuntu 22.04, where Akkoma is installed from source.
 
-# Backing Up (Periodically)
+## Backing Up (Periodically)
 The [doc's backup instructions](https://docs.akkoma.dev/stable/administration/backup/) essentially says we should back up the database, plus a couple of configs and static files/directories.
 
 So first off, ensure we have a place to put the backup files by creating this backup directory:
@@ -88,7 +88,7 @@ My goal is to create a backup once per day, so I also set up a systemd timer to 
    ```
    If the timer file ever gets changed after it starts, do a `systemctl daemon-reload` to reapply the change.
 
-# Renewing That TLS Certificate
+## Renewing That TLS Certificate
 I thought my TLS certificate was going to be renewed automatically, but at one point near my cert expiration, I started getting emails prompting me to renew my cert. Turns out (with `systemctl status certbot.service`) the renewal has been consistently failing because the script needs port 80, which conflicts with nginx, who also uses port 80. So to manually renew the cert, just do:
 ```console
 systemctl stop nginx # free up port 80
@@ -102,7 +102,7 @@ ExecStartPost=systemctl start nginx
 ```
 under `[Service]`. After running `systemctl daemon-reload`, the service starts to succeed. (This isn't perfect since every time the renewal script runs, we have a tiny bit of downtime. But hey.)
 
-# Upgrading the Akkoma Instance
+## Upgrading the Akkoma Instance
 Upgrading Akkoma usually doesn't come with a big fanfare -- except that, starting v3.8.0, Akkoma requires an Elixir version 1.14 that's not provided by the `apt` package manager. This brings me some confusion since I'll have to figure out how to install Elixir 1.14, and ensure the systemd service uses that upgraded Elixir runtime.
 
 1. Switch to the `akkoma` user:
@@ -186,7 +186,7 @@ Moving on to the real upgrading work, [the doc](https://docs.akkoma.dev/stable/a
     journalctl -u akkoma.service -f
     ```
 
-# Extras: Onboarding Another Admin
+## Extras: Onboarding Another Admin
 I'm really fortunate to have a volunteer sys admin for this Akkoma instance. so I'm making sure that they have root access on the server to be able to handle any incidents/issues. Not Akkoma related, just Ubuntu/Linux stuff.
 1. Create a linux user account:
     ```console
@@ -216,5 +216,5 @@ I'm really fortunate to have a volunteer sys admin for this Akkoma instance. so 
     ```
     And add this line `<username> ALL=(ALL) NOPASSWD:ALL` to the bottom of the editor.
 
-# Monitoring
+## Monitoring
 Looking into monitoring solutions for hobby projects, I bumped into [the Monitoring Basics by Steve Mookie Kong](https://ultramookie.com/2023/03/monitoring-basics/). Really the article is more than I need now, but I like the idea of using third-party hosted services to monitor my instance -- self-hosted monitoring solutions runs the risk of being down themselves. For now I use [Better Uptime](https://betterstack.com/better-uptime) for external health pings + uptime dashboard, and [Datadog](https://www.datadoghq.com/) for internal metrics.
