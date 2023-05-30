@@ -2,6 +2,9 @@
 title: "Building Minesweeper with Go"
 date: 2019-02-28T16:35:04-08:00
 draft: false
+tags: ["hack", "go"]
+aliases:
+- /post/building-minesweeper-with-go/
 ---
 
 After going through the [Tour of Go](https://tour.golang.org/list) I started my first toy program -- the game of Minesweeper ([on github](https://github.com/mikihau/minesweeper)). To exercise what I have gotten down with Go I had a couple of things in mind about this program before I started:

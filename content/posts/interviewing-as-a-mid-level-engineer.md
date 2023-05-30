@@ -2,6 +2,9 @@
 title: "Reflecting On My Interviewing Experience As a Mid Level(TM) Software Engineer"
 date: 2020-03-26T06:32:04-08:00
 draft: false
+tags: ["hiring", "cooperate"]
+aliases:
+- /post/interviewing-as-a-mid-level-engineer/
 ---
 
 Having recently spent a couple of months looking for my next career opportunity, I think it'd be great to write down my interviewing experience, and my personal comments to them. Throughout the process I've learned some things about companies, some things about tech careers, and some things about myself. I'm hoping this will shed some light on how we're currently interviewing software engineers as an industry. The particular experience varies a lot by the individual, but I'm sure my experience covers at least some of the common cases.

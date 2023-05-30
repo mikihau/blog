@@ -2,6 +2,9 @@
 title: "Publishing My First Chrome Extension"
 date: 2019-10-14T20:32:09-07:00
 draft: false
+tags: ["hack", "chrome"]
+aliases:
+- /post/publishing-my-first-chrome-extension/
 ---
 
 Just went through the excitement of publishing my first Chrome Extension, Douban Dousay filter ([Chrome Web Store](https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3%E5%B9%BF%E6%92%AD%E8%BF%87%E6%BB%A4%E5%99%A8-douban-dousay-fil/mmlilcjbhccgadmbfojmjlgaegkpklnk)) ([github](https://github.com/mikihau/dousay-filter-chrome-extension)). The code and feature itself is dead simple (~60 lines of javascript), but I just want to make a point for those who thinks making a Chrome Extension is a huge commitment or something. No, it's actually pretty easy to get started.

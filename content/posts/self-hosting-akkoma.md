@@ -2,6 +2,10 @@
 title: "Installing an Akkoma Instance"
 date: 2023-01-15T17:29:56-08:00
 draft: false
+tags: ["how-to", "self hosting", "ubuntu"]
+series: "Akkoma"
+aliases:
+- /post/self-hosting-akkoma/
 ---
 
 I've decided to self-host my own [Akkoma](https://docs.akkoma.dev/stable/) (a hard fork of [Pleroma](https://pleroma.social/)) instance, after actively and happily using Mastodon for 2.5 years. Inspired by [The Teabag Ninja's awesome and detailed writeup on Akkoma's OTP install](https://the.teabag.ninja/posts/2022/11/installing-akkoma-on-your-host/), I'm also sharing my source installation notes along the way for all the folks on the internet, including my future self -- since I did have a few surprises during the process.

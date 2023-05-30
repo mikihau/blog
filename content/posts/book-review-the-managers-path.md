@@ -2,6 +2,9 @@
 title: "Book Review: The Manager's Path"
 date: 2019-04-29T22:15:09-08:00
 draft: false
+tags: ["books", "cooperate"]
+aliases:
+- /posts/book-review-the-managers-path/
 ---
 
 ### My Expectations

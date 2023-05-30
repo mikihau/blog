@@ -2,6 +2,10 @@
 title: "Operating Akkoma"
 date: 2023-05-15T12:02:48-07:00
 draft: false
+tags: ["how-to", "self hosting", "ubuntu", "operations"]
+series: "Akkoma"
+aliases:
+- /post/operating-akkoma
 ---
 
 A couple of months into [self-hosting my Akkoma instance]({{< ref "self-hosting-akkoma.md" >}}), I find myself doing a couple of operational tasks at a recurring basis. So might as well write them down here for future reference. Again, this is on my ARM-based machine with Ubuntu 22.04, where Akkoma is installed from source.
@@ -47,7 +51,7 @@ I put this script at `/usr/local/bin/akkomabackup`.
 
 My goal is to create a backup once per day, so I also set up a systemd timer to run the backup script periodically. Steps:
 1. Create the backup service file as `/etc/systemd/system/akkoma-backup.service`:
-   ```
+   ```console
    [Unit]
    Description="Backing up my Akkoma instance"
 
@@ -55,7 +59,7 @@ My goal is to create a backup once per day, so I also set up a systemd timer to 
    ExecStart=/usr/local/bin/akkomabackup
    ```
 2. Create the timer file as `/etc/systemd/system/akkoma-backup.timer`:
-   ```
+   ```console
    [Unit]
    Description="Run akkoma-backup.service 5min after boot and every 24 hours relative to activation time"
    
@@ -92,7 +96,7 @@ systemctl stop nginx # free up port 80
 systemctl start nginx
 ```
 For an automated solution, I made an edit to `/lib/systemd/system/certbot.service` by adding
-```
+```console
 ExecStartPre=systemctl stop nginx
 ExecStartPost=systemctl start nginx
 ```
