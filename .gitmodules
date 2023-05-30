@@ -2,3 +2,6 @@
 	path = public
 	url = https://github.com/mikihau/mikihau.github.io.git
 	branch = master
+[submodule "themes/poison"]
+	path = themes/poison
+	url = https://github.com/lukeorth/poison.git
