@@ -24,6 +24,7 @@ Then I whip up a quick script to back up all things mentioned in the doc:
 ```console
 #!/usr/bin/env bash
 
+set -e
 echo "Akkoma backup starting"
 
 BACKUP_DIR=/mnt/backups/akkoma/$(date -I)
@@ -87,6 +88,58 @@ My goal is to create a backup once per day, so I also set up a systemd timer to 
    systemctl status akkoma-backup.service
    ```
    If the timer file ever gets changed after it starts, do a `systemctl daemon-reload` to reapply the change.
+
+
+## Restoring From A Backup
+Backups are useless unless I know how to restore them. Here are the steps I took during a fire drill:
+1. Restore static files from the backup:
+   ```console
+   sudo -su akkoma
+   BACKUP_DIR=/mnt/backups/akkoma/$(ls -rt /mnt/backups/akkoma/ | tail -1)
+   cp -r $BACKUP_DIR/uploads/. /var/lib/akkoma/uploads
+   cp -r $BACKUP_DIR/static/. /var/lib/akkoma/static
+   ```
+2. Stop the service:
+   ```console
+   exit
+   sudo -su root
+   systemctl stop akkoma
+   ```
+3. Restore the db from the backup -- this step is pretty dangerous! I haven't found a better way to make sure the pgdump file is valid before erasing the db yet though.
+   ```console
+   BACKUP_DIR=/mnt/backups/akkoma/$(ls -rt /mnt/backups/akkoma/ | tail -1)
+   cd /opt/akkoma/
+   cp $BACKUP_DIR/config/setup_db.psql /tmp/setup_db.psql
+   cp $BACKUP_DIR/akkoma.pgdump /tmp/akkoma.pgdump
+
+   # check the backup file to ensure it looks ok before dropping the database
+   head /tmp/akkoma.pgdump
+   tail /tmp/akkoma.pgdump
+
+   # restore the db
+   sudo -Hu postgres psql -c 'DROP DATABASE akkoma;'; sudo -Hu postgres psql -c 'DROP USER akkoma;'
+   sudo -Hu postgres psql -f /tmp/setup_db.psql
+   sudo -Hu postgres pg_restore -d akkoma -v -1 /tmp/akkoma.pgdump
+   ```
+4. Do this only if you're upgrading from a previous version -- migrate the db:
+   ```console
+   sudo -su akkoma
+   MIX_ENV=prod mix ecto.migrate
+
+5. Restart the service:
+   ```console
+   exit
+   systemctl start akkoma
+
+   # verifications
+   systemctl status akkoma
+   journalctl -u akkoma.service -f
+   ```
+6. Generate the statistics for postgres to plan queries:
+   ```console
+   sudo -Hu postgres vacuumdb --all --analyze-in-stages
+   ```
+For some extra precautions, I also back up the entire VM daily from my VPS provider, so that I can roll back in case I _really_ mess things up.
 
 ## Renewing That TLS Certificate
 I thought my TLS certificate was going to be renewed automatically, but at one point near my cert expiration, I started getting emails prompting me to renew my cert. Turns out (with `systemctl status certbot.service`) the renewal has been consistently failing because the script needs port 80, which conflicts with nginx, who also uses port 80. So to manually renew the cert, just do:
