@@ -27,10 +27,11 @@ Then I whip up a quick script to back up all things mentioned in the doc:
 set -e
 echo "Akkoma backup starting"
 
-BACKUP_DIR=/mnt/backups/akkoma/$(date -I)
+BACKUP_DIR_PARENT=/mnt/backups/akkoma
+BACKUP_DIR=$BACKUP_DIR_PARENT/$(date -I)
 mkdir -p $BACKUP_DIR/config
 
-echo "Stopping akkoma instance"
+echo "Stopping akkoma"
 systemctl stop akkoma
 
 echo "Backing up postgres" 
@@ -43,10 +44,12 @@ cp /opt/akkoma/config/setup_db.psql $BACKUP_DIR/config/setup_db.psql
 cp -r /var/lib/akkoma/uploads $BACKUP_DIR
 cp -r /var/lib/akkoma/static $BACKUP_DIR
 
-echo "Restarting akkoma instance"
+echo "Restarting akkoma"
 systemctl start akkoma
 
-echo "Akkoma backup finished at $BACKUP_DIR"
+echo "Pruning backups older than the last 8"
+cd $BACKUP_DIR_PARENT
+ls -rt $BACKUP_DIR_PARENT | head -n -8 | xargs rm -r
 ```
 I put this script at `/usr/local/bin/akkomabackup`. 
 
